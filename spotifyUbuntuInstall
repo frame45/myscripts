@@ -16,7 +16,7 @@ fi
 
 #SpotifyClient Install
 spotifyRepo=/etc/apt/sources.list.d/spotify.list
-spoty=$(dpkg --get-selections | grep spotify-client)
+spoty=$(dpkg --get-selections | grep spotify-client | awk '{print $1}')
 if [ -e ${spotifyRepo} ] ; then
   echo "Spotify Repo is present, continuing."
   if [ -z ${spoty} ] ; then
