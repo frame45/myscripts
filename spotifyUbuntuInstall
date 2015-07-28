@@ -1,0 +1,39 @@
+#!/bin/bash
+# Info taken from https://www.spotify.com/us/download/linux/
+# by: frame45 (frame45@gmail.com)
+
+# Checks for the spotify repo, then adds it if missing.
+# then checks to see if it is already installed then
+# installs the spotify-client if it is not already present.
+# Must run as root since modding w/repos and stuff,
+# it's easier this way, at least it is for me.
+# Run as root
+
+if [ "$(whoami)" != "root" ] ; then
+ echo "Must be root; Usage: sudo ./spotify-install-ubuntu" >&2
+ exit 1
+fi
+
+#SpotifyClient Install
+spotifyRepo=/etc/apt/sources.list.d/spotify.list
+spoty=$(dpkg --get-selections | grep spotify-client)
+if [ -e ${spotifyRepo} ] ; then
+  echo "Spotify Repo is present, continuing."
+  if [ -z ${spoty} ] ; then
+    echo "Installing Spotify."
+    apt-get install -y spotify-client
+  else
+    echo "Spotify is already installed."
+    exit 0
+  fi
+else
+  echo "Adding Spotify Repo."
+  sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 \
+  --recv-keys D2C19886
+  sudo echo deb http://repository.spotify.com stable non-free | \
+  sudo tee /etc/apt/sources.list.d/spotify.list
+  sudo apt-get update
+  echo "Installing Spotify."
+  sudo apt-get install -y spotify-client
+fi
+exit 0
